@@ -12,7 +12,7 @@ jobs:
 
     steps:
       -name: Checkout repository
-       uses: actions/chekout@v4
+       uses: actions/chekout@v3
 
       -name: Setup Node.js
        uses: actions/setup-node@v4
