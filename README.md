@@ -1,18 +1,44 @@
-# React + Vite
+# YourHabbitTracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ein einfacher Habit-Tracker, der dir hilft, deine täglichen Gewohnheiten zu verfolgen und Fortschritte sichtbar zu machen. Perfekt, um Motivation und Routine zu stärken.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Screenshots
 
-## React Compiler
+---
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Features
 
-Note: This will impact Vite dev & build performances.
+- Neue Gewohnheiten hinzufügen und bearbeiten
+- Tägliches Tracking von Gewohnheiten
+- Fortschritt in Diagrammen visualisieren
+- Optionale Erinnerungen für deine Gewohnheiten
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Installation
+
+1. Repository klonen:
+   ```bash
+   git clone https://github.com/byteworks-dev/YourHabbitTracker.git
+   ```
+2. Ordner wechseln
+   cd YourHabbitTracker
+3. Abhängigkeiten installieren
+   npm installieren
+4. App starten
+   npm run dev
+
+## Tech Stack
+
+- React
+- JavaScript
+- CSS
+- LocalStorage
+
+## Roadmap
+
+- Erinnerungen per E-Mail
+- Dark Mode
+- Mobile Optimierung
