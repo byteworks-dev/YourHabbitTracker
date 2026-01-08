@@ -1,17 +1,15 @@
-function HabitCard({ habit, onToggle }) {
-    return (
-        <div className="flex justify-between items-center p-4 mb-2 bg-white rounded-lg shadow-md hover:bg-gray-100 transition">
-            <h2 className={`text-lg font-semibold ${habit.done ? "line-through text-gray-400" : ""}`}>
-                {habit.name}</h2>
-            <button
-        onClick={() => onToggle(habit.id)}
-        className={`px-3 py-1 rounded ${
-          habit.done ? "bg-green-500 text-white" : "bg-gray-200 text-gray-800"
-        }`}
-      >
-            </button>
-        </div>
-    );
-}
+import HabitHeatmap from "./HabitHeatmap";
+
+const HabitCard = ({ habit, toggleHabitDate }) => { // <--- Hier annehmen!
+  return (
+    <div className="border p-4 mb-4">
+      <h2 className="font-bold">{habit.name}</h2>
+      <HabitHeatmap 
+        history={habit.history} 
+        onCellClick={(date) => toggleHabitDate(habit.id, date)} // <--- Verknüpfen!
+      />
+    </div>
+  );
+};
 
 export default HabitCard;
