@@ -1,32 +1,37 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-function HabitForm({ addHabit }) {
-  const [name, setName] = useState("");
+const HabitForm = ({ addHabit }) => {
+  const [text, setText] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name) return;
-    addHabit(name);  // nur der Name, kein Objekt!
-    setName("");
+    if (!text.trim()) return;
+    addHabit(text);
+    setText("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
-      <input
-        type="text"
-        value={name}             // ❌ nicht value={habit}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Neuen Habit hinzufügen"
-        className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <button
-        type="submit"
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-      >
-        Hinzufügen
-      </button>
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Neues Ziel (z.B. Sport)"
+          className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
+        />
+        
+        <button
+          type="submit"
+          className="h-[50px] px-6 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          {/* WICHTIG: h-5 w-5 begrenzt die Größe des Icons */}
+          
+          <span className="whitespace-nowrap">Hinzufügen</span>
+        </button>
+      </div>
     </form>
   );
-}
+};
 
 export default HabitForm;
