@@ -4,20 +4,16 @@ Ein einfacher Habit-Tracker, der dir hilft, deine täglichen Gewohnheiten zu ver
 
 ---
 
-## Screenshots
+## ✨ Features
+
+- **Cloud-Synchronisierung:** Dank Supabase (PostgreSQL) sind deine Daten überall verfügbar.
+- **Authentifizierung:** Sicherer Login und Registrierung.
+- **Modernes UI:** Glassmorphism-Effekt und sanfte Pastellfarben mit Tailwind v4.
+- **Heatmap:** Visuelle Darstellung deiner Beständigkeit
 
 ---
 
-## Features
-
-- Neue Gewohnheiten hinzufügen und bearbeiten
-- Tägliches Tracking von Gewohnheiten
-- Fortschritt in Diagrammen visualisieren
-- Optionale Erinnerungen für deine Gewohnheiten
-
----
-
-## Installation
+## 🛠️ Installation & Setup
 
 1. Repository klonen:
    ```bash
@@ -27,7 +23,11 @@ Ein einfacher Habit-Tracker, der dir hilft, deine täglichen Gewohnheiten zu ver
    cd YourHabbitTracker
 3. Abhängigkeiten installieren
    npm installieren
-4. App starten
+4. Umgebungsvariablen:
+   Erstelle eine .env Datei im Hauptverzeichnis:
+   VITE_SUPABASE_URL=deine_supabase_url
+   VITE_SUPABASE_ANON_KEY=dein_supabase_anon_key
+5. Entwicklungsumgebung starten
    npm run dev
 
 ## Tech Stack
