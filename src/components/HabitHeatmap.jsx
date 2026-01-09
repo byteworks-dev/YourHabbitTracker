@@ -54,7 +54,7 @@ const HabitHeatmap = ({ history, onCellClick }) => {
           {weeks.map((week, wIndex) => (
             <div key={wIndex} className="flex flex-col gap-[2px]">
               {week.map((day) => {
-                const isDone = !!(history && history[day]);
+                const isDone = Array.isArray(history) ? history.includes(day) : !!(history && history[day]);
                 const isToday = day === dayjs().format("YYYY-MM-DD");
 
                 return (

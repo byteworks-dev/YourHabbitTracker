@@ -46,6 +46,9 @@ const App = () => {
 
   // 3. LOGIK-FUNKTIONEN
   const addHabit = async (name) => {
+
+    if (!session?.user) return;
+
     const { data, error } = await supabase
       .from('habits')
       .insert([{ name, user_id: session.user.id, history: [] }])
@@ -82,8 +85,13 @@ const App = () => {
   };
 
   // 4. WEICHE: LOGIN ODER APP
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Laden...</div>;
-  if (!session) return <Auth />;
+  if (loading) {
+  return <div className="min-h-screen flex items-center justify-center bg-[#E0F2FE]">Laden...</div>;
+}
+
+if (!session) {
+  return <Auth />;
+}
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased pb-20">
