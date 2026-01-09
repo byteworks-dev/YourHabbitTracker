@@ -8,11 +8,11 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs.recommended,
-      reactRefresh.configs.vite,
-    ],
+    plugins: {
+      // Hier weisen wir die Plugin-Objekte den Namen zu
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -23,7 +23,8 @@ export default defineConfig([
       },
     },
     rules: {
-      // Behält die Prüfung auf ungenutzte Variablen bei
+      ...js.configs.recommended.rules,
+      ...reactHooks.configs.recommended.rules,
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       'react-refresh/only-export-components': [
         'warn',
