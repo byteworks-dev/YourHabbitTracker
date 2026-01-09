@@ -29,7 +29,7 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       // 3. Optionale zusätzliche Tailwind-Regeln
       'tailwindcss/classnames-order': 'warn', // Sortiert deine Klassen automatisch
-      'tailwindcss/no-custom-classname': 'off', // Erlaubt eigene CSS-Klassen neben Tailwind
+      //'tailwindcss/no-custom-classname': 'off', // Erlaubt eigene CSS-Klassen neben Tailwind
     },
   },
 ])
