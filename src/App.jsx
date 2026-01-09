@@ -71,7 +71,7 @@ const App = () => {
                 </span>
               </div>
             </div>
-
+            
             <HabitList 
               habits={habits} 
               toggleHabitDate={toggleHabitDate} 

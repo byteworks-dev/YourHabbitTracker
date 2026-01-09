@@ -14,7 +14,6 @@ const HabitHeatmap = ({ history, onCellClick }) => {
     weeks.push(weekDays.reverse());
   }
   weeks.reverse();
-
   return (
     <div className="mt-2 p-3 bg-white border border-slate-200 rounded-lg w-fit shadow-sm font-sans">
       
