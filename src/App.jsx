@@ -1,66 +1,110 @@
 import { useState, useEffect } from "react";
 import HabitList from "./components/HabitList";
 import HabitForm from "./components/HabitForm";
+import Auth from "./components/Auth"; // Dein neuer Login-Screen
+import { supabase } from "./supabaseClient";
 
 const App = () => {
-  // Daten aus LocalStorage laden oder Standardwerte setzen
-  const [habits, setHabits] = useState(() => {
-    const savedHabits = localStorage.getItem("habit-tracker-v1");
-    return savedHabits ? JSON.parse(savedHabits) : [
-      { id: 1, name: "Sport", history: {} },
-      { id: 2, name: "Lesen", history: {} }
-    ];
-  });
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [habits, setHabits] = useState([]);
 
-  // Automatisches Speichern bei Änderungen
+  // 1. ÜBERPRÜFEN OB EINGELOGGT
   useEffect(() => {
-    localStorage.setItem("habit-tracker-v1", JSON.stringify(habits));
-  }, [habits]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
 
-  const addHabit = (name) => {
-    const newHabit = { id: Date.now(), name, history: {} };
-    setHabits([...habits, newHabit]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // 2. DATEN AUS SUPABASE LADEN (statt LocalStorage)
+  useEffect(() => {
+    if (session) {
+      fetchHabits();
+    }
+  }, [session]);
+
+  const fetchHabits = async () => {
+    const { data, error } = await supabase
+      .from('habits')
+      .select('*')
+      .order('created_at', { ascending: true });
+    
+    if (error) console.error("Fehler:", error.message);
+    else setHabits(data || []);
   };
 
-  const toggleHabitDate = (habitId, date) => {
-    setHabits(habits.map(h => 
-      h.id === habitId ? { ...h, history: { ...h.history, [date]: !h.history[date] } } : h
-    ));
+  // 3. LOGIK-FUNKTIONEN (UMBAU AUF DB)
+  const addHabit = async (name) => {
+    const { data, error } = await supabase
+      .from('habits')
+      .insert([{ name, user_id: session.user.id, history: [] }])
+      .select();
+
+    if (!error) setHabits([...habits, ...data]);
   };
 
-  const deleteHabit = (id) => {
-    if (window.confirm("Diesen Habit wirklich löschen?")) {
-      setHabits(habits.filter(h => h.id !== id));
+  const toggleHabitDate = async (habitId, date) => {
+    const habit = habits.find(h => h.id === habitId);
+    let newHistory = Array.isArray(habit.history) ? [...habit.history] : [];
+
+    if (newHistory.includes(date)) {
+      newHistory = newHistory.filter(d => d !== date);
+    } else {
+      newHistory.push(date);
+    }
+
+    const { error } = await supabase
+      .from('habits')
+      .update({ history: newHistory })
+      .eq('id', habitId);
+
+    if (!error) {
+      setHabits(habits.map(h => h.id === habitId ? { ...h, history: newHistory } : h));
     }
   };
 
+  const deleteHabit = async (id) => {
+    if (window.confirm("Diesen Habit wirklich löschen?")) {
+      const { error } = await supabase.from('habits').delete().eq('id', id);
+      if (!error) setHabits(habits.filter(h => h.id !== id));
+    }
+  };
+
+  // 4. WEICHE: LOGIN ODER APP
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Laden...</div>;
+  if (!session) return <Auth />;
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased pb-20">
-      {/* HEADER */}
       <header className="bg-white border-b border-slate-200 pt-16 pb-10 px-4">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 mb-2">
-            Habit Tracker
-          </h1>
-          <p className="text-slate-500 text-lg font-medium">
-            Kleine Schritte führen zu großen Veränderungen.
-          </p>
+        <div className="max-w-3xl mx-auto flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl font-black tracking-tight text-slate-900 mb-2">Habit Tracker</h1>
+            <p className="text-slate-500 text-lg font-medium">Kleine Schritte führen zu großen Veränderungen.</p>
+          </div>
+          <button 
+            onClick={() => supabase.auth.signOut()}
+            className="text-xs font-bold text-red-400 uppercase tracking-widest hover:text-red-600 transition-colors mb-2"
+          >
+            Logout
+          </button>
         </div>
       </header>
 
-      {/* MAIN CONTENT */}
       <main className="max-w-3xl mx-auto px-4 -mt-6">
         <div className="space-y-10">
-          
-          {/* EINGABE-KARTE */}
           <section className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
-            <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6">
-              Neues Ziel setzen
-            </h2>
+            <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6">Neues Ziel setzen</h2>
             <HabitForm addHabit={addHabit} />
           </section>
 
-          {/* LISTE-SEKTION */}
           <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
               <h2 className="text-2xl font-bold text-slate-800">Deine Routine</h2>
@@ -78,7 +122,6 @@ const App = () => {
               deleteHabit={deleteHabit} 
             />
           </section>
-
         </div>
       </main>
     </div>
