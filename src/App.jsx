@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"; // useCallback hinzugefügt
 import HabitList from "./components/HabitList";
 import HabitForm from "./components/HabitForm";
-import Auth from "./components/Auth"; // Dein neuer Login-Screen
+import Auth from "./components/Auth";
 import { supabase } from "./supabaseClient";
 
 const App = () => {
@@ -23,14 +23,10 @@ const App = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. DATEN AUS SUPABASE LADEN (statt LocalStorage)
-  useEffect(() => {
-    if (session) {
-      fetchHabits();
-    }
-  }, [session]);
-
-  const fetchHabits = async () => {
+  // 2. DATEN-FUNKTION (mit useCallback stabilisiert für den Linter)
+  const fetchHabits = useCallback(async () => {
+    if (!session) return;
+    
     const { data, error } = await supabase
       .from('habits')
       .select('*')
@@ -38,9 +34,17 @@ const App = () => {
     
     if (error) console.error("Fehler:", error.message);
     else setHabits(data || []);
-  };
+  }, [session]);
 
-  // 3. LOGIK-FUNKTIONEN (UMBAU AUF DB)
+  // Effekt zum Laden der Daten
+  useEffect(() => {
+    const load = async () => {
+      await fetchHabits();
+    };
+    load();
+  }, [fetchHabits]);
+
+  // 3. LOGIK-FUNKTIONEN
   const addHabit = async (name) => {
     const { data, error } = await supabase
       .from('habits')
