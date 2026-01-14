@@ -1,6 +1,6 @@
-# YourHabbitTracker
+# YourHabbitTracker 🚀
 
-Ein einfacher Habit-Tracker, der dir hilft, deine täglichen Gewohnheiten zu verfolgen und Fortschritte sichtbar zu machen. Perfekt, um Motivation und Routine zu stärken.
+Ein moderner Habit-Tracker, der dir hilft, tägliche Gewohnheiten zu verfolgen und Beständigkeit aufzubauen. Das Projekt ist vollständig dockerisiert und verfügt über eine automatisierte CI/CD-Pipeline.
 
 ---
 
@@ -9,36 +9,54 @@ Ein einfacher Habit-Tracker, der dir hilft, deine täglichen Gewohnheiten zu ver
 - **Cloud-Synchronisierung:** Dank Supabase (PostgreSQL) sind deine Daten überall verfügbar.
 - **Authentifizierung:** Sicherer Login und Registrierung.
 - **Modernes UI:** Glassmorphism-Effekt und sanfte Pastellfarben mit Tailwind v4.
-- **Heatmap:** Visuelle Darstellung deiner Beständigkeit
+- **Heatmap:** Visuelle Darstellung deiner Beständigkeit.
+- **Docker-Ready:** Einfaches Deployment und lokale Entwicklung via Docker.
+- **CI/CD:** Automatisierte Builds und Tests via GitHub Actions.
 
 ---
 
-## 🛠️ Installation & Setup
+## 🛠️ Schnellstart (Der einfachste Weg)
 
-1. Repository klonen:
+Voraussetzung: [Docker Desktop](https://www.docker.com/products/docker-desktop/) ist installiert.
+
+1. **Repository klonen:**
+
    ```bash
-   git clone https://github.com/byteworks-dev/YourHabbitTracker.git
-   ```
-2. Ordner wechseln
+   git clone [https://github.com/byteworks-dev/YourHabbitTracker.git](https://github.com/byteworks-dev/YourHabbitTracker.git)
    cd YourHabbitTracker
-3. Abhängigkeiten installieren
-   npm installieren
-4. Umgebungsvariablen:
-   Erstelle eine .env Datei im Hauptverzeichnis:
+
+   ```
+
+2. **Umgebungscariablen einrichten**
    VITE_SUPABASE_URL=deine_supabase_url
    VITE_SUPABASE_ANON_KEY=dein_supabase_anon_key
-5. Entwicklungsumgebung starten
-   npm run dev
 
-## Tech Stack
+3. App mit Docker starten:
+   docker compose up -Builds
 
-- React
-- JavaScript
-- CSS
-- Supabase
+💻 Manuelle Installation (Entwicklung)
 
-## Roadmap
+1. Abhängigkeiten installieren
+   - npm install
+2. Entwicklungsumgebungg starten
+   - npm run dev
 
-- Erinnerungen per E-Mail
-- Dark Mode
-- Mobile Optimierung
+🏗️ Tech Stack & DevOps
+
+    Frontend: React, JavaScript, Tailwind CSS v4
+
+    Backend-as-a-Service: Supabase (Auth & Database)
+
+    Containerisierung: Docker & Docker Compose
+
+    Webserver: Nginx (im Produktions-Image)
+
+    CI/CD: GitHub Actions (Node Build & Docker Build Check)
+
+🛣️ Roadmap
+
+    [ ] Erinnerungen per E-Mail
+
+    [ ] Dark Mode Support
+
+    [ ] Mobile Optimierung & PWA
