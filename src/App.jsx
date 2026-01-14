@@ -78,7 +78,7 @@ const App = () => {
       <aside className="w-64 bg-[#111827] border-r border-slate-800 flex flex-col shrink-0">
         <div className="p-6">
           <h1 className="text-xl font-black text-white italic tracking-tighter">
-            Habit<span className="text-indigo-500">Flow</span>
+            Your<span className="text-indigo-500">Habit</span>
           </h1>
         </div>
         

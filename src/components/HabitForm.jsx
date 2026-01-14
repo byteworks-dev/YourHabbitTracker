@@ -1,35 +1,35 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const HabitForm = ({ addHabit }) => {
-  const [text, setText] = useState("");
+  const [name, setName] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!text.trim()) return;
-    addHabit(text);
-    setText("");
+    if (!name.trim()) return;
+    addHabit(name);
+    setName("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
-      <div className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Neues Ziel (z.B. Sport)"
-          className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
-        />
-        
-        <button
-          type="submit"
-          className="h-[50px] px-6 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 active:scale-95 transition-all flex items-center justify-center gap-2"
-        >
-          {/* WICHTIG: h-5 w-5 begrenzt die Größe des Icons */}
-          
-          <span className="whitespace-nowrap">Hinzufügen</span>
-        </button>
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
+      <input
+        type="text"
+        // Placeholder-Farbe auf slate-400 gesetzt für bessere Sichtbarkeit
+        placeholder="Neue Gewohnheit hinzufügen..."
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="flex-1 bg-[#0f172a] border border-slate-700 rounded-2xl px-6 py-4 text-white 
+                   placeholder:text-slate-400 focus:outline-none focus:ring-2 
+                   focus:ring-indigo-500/50 focus:border-indigo-500 transition-all shadow-inner"
+      />
+      <button 
+        type="submit"
+        className="bg-white text-[#0f172a] hover:bg-indigo-50 px-8 py-4 rounded-2xl 
+                   font-black uppercase tracking-widest text-xs transition-all 
+                   shadow-lg active:scale-95 shrink-0"
+      >
+        Hinzufügen
+      </button>
     </form>
   );
 };
