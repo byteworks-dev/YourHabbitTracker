@@ -35,7 +35,7 @@ Ein einfacher Habit-Tracker, der dir hilft, deine täglichen Gewohnheiten zu ver
 - React
 - JavaScript
 - CSS
-- LocalStorage
+- Supabase
 
 ## Roadmap
 

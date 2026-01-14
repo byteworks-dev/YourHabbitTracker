@@ -1,0 +1,13 @@
+services:
+  habit-tracker:
+    build:
+      context: .
+      args:
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    container_name: habit-tracker-app
+    ports:
+      - "9999:80"
+    env_file:
+      - .env
+    restart: unless-stopped

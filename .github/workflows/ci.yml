@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Node.js & Docker CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-node:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 24
+          node-version: 20
           cache: "npm"
 
       - name: Install dependencies
@@ -31,3 +31,21 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build
+
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Image
+        uses: docker/setup-build-actions@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-actions@v5
+        with:
+          context: .
+          push: false
+          build-args: |
+            VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
+            VITE_SUPABASE_ANON_KEY=${{ VITE_SUPABASE_ANON_KEY }}
