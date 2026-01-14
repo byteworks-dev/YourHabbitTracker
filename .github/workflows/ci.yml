@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Docker Image
-        uses: docker/setup-build-action@v3
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Docker Image
         uses: docker/build-push-action@v5
