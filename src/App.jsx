@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"; // useCallback hinzugefügt
+import { useState, useEffect, } from "react";
 import HabitList from "./components/HabitList";
 import HabitForm from "./components/HabitForm";
 import Auth from "./components/Auth";
@@ -9,7 +9,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
 
-  // 1. ÜBERPRÜFEN OB EINGELOGGT
+  // 1. Authentifizierung prüfen
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -23,111 +23,97 @@ const App = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 2. DATEN-FUNKTION (mit useCallback stabilisiert für den Linter)
-  const fetchHabits = useCallback(async () => {
-    if (!session) return;
-    
-    const { data, error } = await supabase
-      .from('habits')
-      .select('*')
-      .order('created_at', { ascending: true });
-    
-    if (error) console.error("Fehler:", error.message);
-    else setHabits(data || []);
-  }, [session]);
-
-  // Effekt zum Laden der Daten
+  // 2. Daten laden - Wir definieren die Logik hier, um sie im Effekt zu nutzen
   useEffect(() => {
-    const load = async () => {
-      await fetchHabits();
+    // Wir definieren fetchHabits direkt im Effekt, 
+    // damit es keine externe Abhängigkeit mehr ist.
+    const fetchHabits = async () => {
+      if (!session) return;
+      
+      const { data, error } = await supabase
+        .from('habits')
+        .select('*')
+        .order('created_at', { ascending: true });
+      
+      if (error) console.error("Fehler:", error.message);
+      else setHabits(data || []);
     };
-    load();
-  }, [fetchHabits]);
 
-  // 3. LOGIK-FUNKTIONEN
+    fetchHabits();
+  }, [session]); // Der Effekt feuert NUR, wenn sich die session ändert
+
+  // 3. Logik-Aktionen (add, toggle, delete bleiben gleich)
   const addHabit = async (name) => {
-
     if (!session?.user) return;
-
     const { data, error } = await supabase
       .from('habits')
       .insert([{ name, user_id: session.user.id, history: [] }])
       .select();
-
-    if (!error) setHabits([...habits, ...data]);
+    if (!error) setHabits(prev => [...prev, ...data]);
   };
 
   const toggleHabitDate = async (habitId, date) => {
     const habit = habits.find(h => h.id === habitId);
     let newHistory = Array.isArray(habit.history) ? [...habit.history] : [];
+    newHistory = newHistory.includes(date) ? newHistory.filter(d => d !== date) : [...newHistory, date];
 
-    if (newHistory.includes(date)) {
-      newHistory = newHistory.filter(d => d !== date);
-    } else {
-      newHistory.push(date);
-    }
-
-    const { error } = await supabase
-      .from('habits')
-      .update({ history: newHistory })
-      .eq('id', habitId);
-
-    if (!error) {
-      setHabits(habits.map(h => h.id === habitId ? { ...h, history: newHistory } : h));
-    }
+    const { error } = await supabase.from('habits').update({ history: newHistory }).eq('id', habitId);
+    if (!error) setHabits(prev => prev.map(h => h.id === habitId ? { ...h, history: newHistory } : h));
   };
 
   const deleteHabit = async (id) => {
-    if (window.confirm("Diesen Habit wirklich löschen?")) {
+    if (window.confirm("Löschen?")) {
       const { error } = await supabase.from('habits').delete().eq('id', id);
-      if (!error) setHabits(habits.filter(h => h.id !== id));
+      if (!error) setHabits(prev => prev.filter(h => h.id !== id));
     }
   };
 
-  // 4. WEICHE: LOGIN ODER APP
-  if (loading) {
-  return <div className="min-h-screen flex items-center justify-center bg-[#E0F2FE]">Laden...</div>;
-}
-
-if (!session) {
-  return <Auth />;
-}
+  if (loading) return <div className="bg-[#0f172a] h-screen text-white p-10">Lade Dashboard...</div>;
+  if (!session) return <Auth />;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased pb-20">
-      <header className="bg-white border-b border-slate-200 pt-16 pb-10 px-4">
-        <div className="max-w-3xl mx-auto flex justify-between items-end">
-          <div>
-            <h1 className="text-4xl font-black tracking-tight text-slate-900 mb-2">Habit Tracker</h1>
-            <p className="text-slate-500 text-lg font-medium">Kleine Schritte führen zu großen Veränderungen.</p>
+    <div className="flex h-screen w-full bg-[#0f172a] text-slate-200 antialiased overflow-hidden">
+      
+      {/* SIDEBAR - Fixierte Breite, dunklerer Hintergrund */}
+      <aside className="w-64 bg-[#111827] border-r border-slate-800 flex flex-col shrink-0">
+        <div className="p-6">
+          <h1 className="text-xl font-black text-white italic tracking-tighter">
+            Habit<span className="text-indigo-500">Flow</span>
+          </h1>
+        </div>
+        
+        <nav className="flex-1 px-4 mt-4">
+          <div className="bg-indigo-600/10 text-indigo-400 px-4 py-3 rounded-xl border border-indigo-500/20 font-bold flex items-center gap-3">
+            <span>🚀</span> Dashboard
           </div>
+        </nav>
+
+        <div className="p-4 mt-auto">
           <button 
             onClick={() => supabase.auth.signOut()}
-            className="text-xs font-bold text-red-400 uppercase tracking-widest hover:text-red-600 transition-colors mb-2"
+            className="w-full py-3 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all"
           >
             Logout
           </button>
         </div>
-      </header>
+      </aside>
 
-      <main className="max-w-3xl mx-auto px-4 -mt-6">
-        <div className="space-y-10">
-          <section className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
-            <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-6">Neues Ziel setzen</h2>
+      {/* MAIN CONTENT - Scrollbar */}
+      <main className="flex-1 overflow-y-auto bg-[#0f172a] flex flex-col">
+        <header className="px-10 py-8 sticky top-0 bg-[#0f172a]/80 backdrop-blur-md z-10">
+          <h2 className="text-3xl font-bold text-white tracking-tight">Willkommen!</h2>
+          <p className="text-slate-500 text-sm mt-1">Du hast heute {habits.length} Gewohnheiten im Fokus.</p>
+        </header>
+
+        <div className="px-10 pb-20 max-w-5xl w-full mx-auto space-y-12">
+          {/* Formular Card */}
+          <section className="bg-[#1e293b] p-6 rounded-3xl border border-slate-800 shadow-2xl">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 mb-6 px-2">Neues Ziel hinzufügen</h3>
             <HabitForm addHabit={addHabit} />
           </section>
 
-          <section className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-              <h2 className="text-2xl font-bold text-slate-800">Deine Routine</h2>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  {habits.length} Aktive Habits
-                </span>
-              </div>
-            </div>
-            
+          {/* Habits Grid */}
+          <section>
             <HabitList 
               habits={habits} 
               toggleHabitDate={toggleHabitDate} 

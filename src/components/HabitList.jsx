@@ -1,49 +1,56 @@
-import HabitHeatmap from "./HabitHeatmap";
-
 const HabitList = ({ habits, toggleHabitDate, deleteHabit }) => {
+  const today = new Date().toISOString().split('T')[0];
+
   return (
-    <div className="flex flex-col gap-6">
-      {habits.map((habit) => (
-        <div 
-          key={habit.id} 
-          className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col"
-        >
-          {/* Header der Card - Padding separat */}
-          <div className="p-6 pb-2 flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-bold text-slate-800">{habit.name}</h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                Aktivität
-              </p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {habits.map((habit) => {
+        const isCompletedToday = habit.history?.includes(today);
+        const streak = habit.history?.length || 0;
+
+        return (
+          <div 
+            key={habit.id} 
+            className="bg-[#1e293b] border border-slate-800 p-6 rounded-3xl hover:border-indigo-500/50 transition-all group shadow-lg relative overflow-hidden"
+          >
+            {/* Dekorativer Hintergrund-Effekt bei Hover */}
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 rounded-full group-hover:bg-indigo-500/10 transition-colors"></div>
+
+            <div className="flex justify-between items-start mb-6">
+              <div className={`p-3 rounded-2xl ${isCompletedToday ? 'bg-green-500/20 text-green-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
+                {isCompletedToday ? '✅' : '🎯'}
+              </div>
+              <button 
+                onClick={() => deleteHabit(habit.id)}
+                className="text-slate-600 hover:text-red-400 transition-colors text-[10px] font-black uppercase tracking-widest"
+              >
+                Löschen
+              </button>
             </div>
-            <button 
-              onClick={() => deleteHabit(habit.id)}
-              className="p-2.5 text-black-400 hover:text-red-600 hover:bg-red-50 bg-red-50/30 rounded-xl transition-all shadow-sm border border-red-100"
-              title="Habit löschen"
+
+            <h3 className="text-xl font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors">
+              {habit.name}
+            </h3>
+            
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-xs text-slate-500">Gesamte Tage:</span>
+              <span className="text-xs font-bold text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded-full">
+                {streak}
+              </span>
+            </div>
+
+            <button
+              onClick={() => toggleHabitDate(habit.id, today)}
+              className={`w-full py-4 rounded-2xl font-bold transition-all transform active:scale-95 ${
+                isCompletedToday 
+                ? "bg-slate-800 text-green-400 border border-green-500/30" 
+                : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
+              }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+              {isCompletedToday ? "Für heute erledigt" : "Heute abschließen"}
             </button>
           </div>
-
-          {/* Heatmap Bereich - Eigener Container für das Scrollen */}
-          <div className="w-full px-4 pb-6 mt-2">
-            <div className="overflow-x-auto overflow-y-hidden custom-scrollbar">
-              {/* min-w-[500px] (oder ähnlich) stellt sicher, dass die Tabelle nicht gequetscht wird */}
-              <div className="inline-block min-w-full align-middle pt-2">
-                <HabitHeatmap 
-                  history={habit.history} 
-                  onCellClick={(date) => toggleHabitDate(habit.id, date)} 
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
